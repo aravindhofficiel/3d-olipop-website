@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLIPOP | Modern Soda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .parallax-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-button {
+            transition: all 0.3s ease;
+        }
+
+        .variant-fade {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="dark-mode">
+
+    <div id="loader" class="loading-screen">
+        <h1 class="text-4xl font-black mb-8 tracking-tighter">OLIPOP</h1>
+        <div class="w-64 h-1 bg-gray-800 rounded-full overflow-hidden">
+            <div id="load-bar" class="h-full bg-white w-0 transition-all duration-300"></div>
+        </div>
+        <p id="load-text" class="mt-4 text-xs font-mono uppercase tracking-widest text-gray-400">Loading 0%</p>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 glass-nav px-8 py-6 flex justify-between items-center border-b border-white/10">
+        <div class="text-2xl font-black tracking-tighter">OLIPOP</div>
+        <div class="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest">
+            <a href="#product" class="hover:text-gray-400 transition">Product</a>
+            <a href="#ingredients" class="hover:text-gray-400 transition">Ingredients</a>
+            <a href="#nutrition" class="hover:text-gray-400 transition">Nutrition</a>
+            <a href="#reviews" class="hover:text-gray-400 transition">Reviews</a>
+            <a href="#faq" class="hover:text-gray-400 transition">FAQ</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="mode-toggle" class="p-2 border border-white/20 rounded-full">
+                <i data-lucide="moon" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="relative h-[300vh] w-full" id="hero">
+        <canvas id="hero-canvas" class="parallax-canvas"></canvas>
+
+        <div class="sticky top-0 h-screen w-full flex items-center px-12 pointer-events-none">
+            
+            <div class="w-full max-w-xl pointer-events-auto variant-fade" id="hero-content">
+                <h1 id="v-name" class="text-8xl font-black leading-none mb-0">CHERRY</h1>
+                <h2 id="v-subtitle" class="text-3xl font-light tracking-[0.2em] mb-6 opacity-80 uppercase">SODA</h2>
+                <p id="v-description" class="text-lg text-gray-300 mb-8 leading-relaxed max-w-md">
+                    A modern take on a classic soda with a perfect blend of sweet and tart, full of nostalgic flavor.
+                </p>
+                <div class="flex gap-4">
+                    <button class="cta-button px-8 py-4 border border-white rounded-full uppercase text-xs font-bold hover:bg-white hover:text-black">Add To</button>
+                    <button class="cta-button px-8 py-4 bg-white text-black rounded-full uppercase text-xs font-bold hover:bg-gray-200">Cart</button>
+                </div>
+            </div>
+
+            <div class="flex-grow"></div>
+
+            <div class="flex flex-col items-end pointer-events-auto">
+                <div id="v-index" class="text-9xl font-black opacity-10 mb-4">01</div>
+                <div class="flex flex-col items-center gap-4">
+                    <button onclick="changeVariant(-1)" class="group flex items-center gap-2 text-[10px] tracking-widest font-bold uppercase rotate-90 origin-right mb-12">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i> PREV
+                    </button>
+                    <div class="h-20 w-[1px] bg-white/30"></div>
+                    <button onclick="changeVariant(1)" class="group flex items-center gap-2 text-[10px] tracking-widest font-bold uppercase rotate-90 origin-right mt-12">
+                        NEXT <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-10 left-12 flex gap-6 opacity-50 z-40">
+            <i data-lucide="twitter" class="w-5 h-5 cursor-pointer hover:opacity-100 transition"></i>
+            <i data-lucide="instagram" class="w-5 h-5 cursor-pointer hover:opacity-100 transition"></i>
+            <i data-lucide="facebook" class="w-5 h-5 cursor-pointer hover:opacity-100 transition"></i>
+        </div>
+    </section>
+
+    <main class="relative z-10 bg-black">
+        <section id="product" class="py-32 px-12 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h3 class="text-5xl font-bold mb-6">Real botanicals.<br>Prebiotic punch.</h3>
+                <p class="text-gray-400 text-lg mb-8">We spent years crafting a drink that tastes like the soda you grew up with, but with the benefits of a digestive tonic.</p>
+                <ul class="space-y-4 font-bold uppercase tracking-tighter">
+                    <li class="flex items-center gap-3"><i data-lucide="check-circle" class="text-green-500 w-5 h-5"></i> 9g Dietary Fiber</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check-circle" class="text-green-500 w-5 h-5"></i> 2-5g Sugar</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check-circle" class="text-green-500 w-5 h-5"></i> Non-GMO & Vegan</li>
+                </ul>
+            </div>
+            <div class="bg-zinc-900 aspect-square rounded-3xl overflow-hidden flex items-center justify-center p-12">
+                 <img src="https://placehold.co/600x600/6344d4/FFFFFF?text=Grape+Soda+Can" alt="Product" class="rounded-xl shadow-2xl">
+            </div>
+        </section>
+
+        <section id="nutrition" class="py-32 px-12 bg-zinc-950">
+            <div class="max-w-md mx-auto border-4 border-white p-6 font-mono text-black bg-white">
+                <h2 class="text-4xl font-black border-b-8 border-black pb-2 mb-2">Nutrition Facts</h2>
+                <p class="border-b-2 border-black pb-1">1 serving per container</p>
+                <div class="flex justify-between font-bold text-xl border-b-4 border-black pb-1">
+                    <span>Amount per serving</span>
+                    <span>Calories 35</span>
+                </div>
+                <div class="text-sm space-y-1 mt-2">
+                    <div class="flex justify-between border-b border-black"><span>Total Fat 0g</span><b>0%</b></div>
+                    <div class="flex justify-between border-b border-black"><span>Sodium 25mg</span><b>1%</b></div>
+                    <div class="flex justify-between border-b border-black"><span>Total Carb 13g</span><b>5%</b></div>
+                    <div class="ml-4 flex justify-between border-b border-black"><span>Dietary Fiber 9g</span><b>32%</b></div>
+                    <div class="ml-4 flex justify-between border-b border-black"><span>Total Sugars 3g</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="py-32 px-12 max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-12 text-center">Common Questions</h2>
+            <div class="space-y-4">
+                <details class="group border-b border-white/10 pb-4">
+                    <summary class="list-none flex justify-between items-center cursor-pointer text-xl font-bold">
+                        Is OLIPOP keto friendly?
+                        <i data-lucide="plus" class="group-open:rotate-45 transition"></i>
+                    </summary>
+                    <p class="mt-4 text-gray-400">Yes! With only 2-5g of sugar and high fiber content, it fits most keto lifestyles.</p>
+                </details>
+                <details class="group border-b border-white/10 pb-4">
+                    <summary class="list-none flex justify-between items-center cursor-pointer text-xl font-bold">
+                        Where do you ship?
+                        <i data-lucide="plus" class="group-open:rotate-45 transition"></i>
+                    </summary>
+                    <p class="mt-4 text-gray-400">We currently ship to all 48 contiguous states in the US.</p>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black py-20 px-12 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-start gap-12">
+            <div>
+                <h2 class="text-3xl font-black tracking-tighter mb-4">OLIPOP</h2>
+                <p class="text-gray-500 max-w-xs">A new kind of soda. Better for you, better for the world.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-12">
+                <div class="flex flex-col gap-2 text-sm text-gray-400 uppercase font-bold tracking-widest">
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Privacy</a>
+                </div>
+                <div class="flex flex-col gap-2 text-sm text-gray-400 uppercase font-bold tracking-widest">
+                    <a href="#">Instagram</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">TikTok</a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-20 pt-8 border-t border-white/5 text-[10px] uppercase tracking-[0.3em] text-gray-600">
+            © 2026 Olipop Inc. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // --- Configuration ---
+        const variants = [
+            {
+                name: "Cherry",
+                subtitle: "Soda",
+                desc: "A modern take on a classic soda with a perfect blend of sweet and tart, full of nostalgic flavor.",
+                color: "#ff2d55",
+                url: "https://omqaodalyvzbrvckcumi.supabase.co/storage/v1/object/public/assets/soda/frame_",
+                frames: 240
+            },
+            {
+                name: "Grape",
+                subtitle: "Soda",
+                desc: "A modern functional soda brand inspired by classic flavors but made with better ingredients.",
+                color: "#8a2be2",
+                url: "https://omqaodalyvzbrvckcumi.supabase.co/storage/v1/object/public/assets/soda2/frame_",
+                frames: 240
+            },
+            {
+                name: "Lemon",
+                subtitle: "Ginger Soda",
+                desc: "Bright and refreshing citrus soda with natural lemon spark and crisp bubbles.",
+                color: "#f4d03f",
+                url: "https://omqaodalyvzbrvckcumi.supabase.co/storage/v1/object/public/assets/soda3/frame_",
+                frames: 240
+            }
+        ];
+
+        let currentIdx = 0;
+        let images = [];
+        const canvas = document.getElementById('hero-canvas');
+        const context = canvas.getContext('2d');
+        const airbnb = { frame: 0 };
+
+        // --- Initialization ---
+        function init() {
+            lucide.createIcons();
+            gsap.registerPlugin(ScrollTrigger);
+            loadVariant(0);
+            
+            // Handle dark/light mode toggle
+            document.getElementById('mode-toggle').addEventListener('click', () => {
+                const body = document.body;
+                const isDark = body.classList.contains('bg-black');
+                body.style.backgroundColor = isDark ? '#f4f4f4' : '#000';
+                body.style.color = isDark ? '#000' : '#fff';
+                body.classList.toggle('bg-black');
+                // Note: Simplified toggle for demo
+            });
+        }
+
+        // --- Core Logic ---
+        async function loadVariant(index) {
+            const variant = variants[index];
+            currentIdx = index;
+            
+            // UI Update with Animation
+            const content = document.getElementById('hero-content');
+            content.style.opacity = 0;
+            content.style.transform = "translateX(-20px)";
+            
+            setTimeout(() => {
+                document.getElementById('v-name').innerText = variant.name;
+                document.getElementById('v-subtitle').innerText = variant.subtitle;
+                document.getElementById('v-description').innerText = variant.desc;
+                document.getElementById('v-index').innerText = `0${index + 1}`;
+                
+                // Color accent updates
+                document.querySelectorAll('.cta-button')[1].style.backgroundColor = 'white';
+                
+                content.style.opacity = 1;
+                content.style.transform = "translateX(0)";
+            }, 500);
+
+            // Preload Frames
+            document.getElementById('loader').style.display = 'flex';
+            images = [];
+            let loadedCount = 0;
+
+            for (let i = 1; i <= variant.frames; i++) {
+                const img = new Image();
+                const frameNum = i.toString().padStart(4, '0');
+                img.src = `${variant.url}${frameNum}.webp`;
+                img.onload = () => {
+                    loadedCount++;
+                    const progress = Math.round((loadedCount / variant.frames) * 100);
+                    document.getElementById('load-bar').style.width = progress + '%';
+                    document.getElementById('load-text').innerText = `Loading ${progress}%`;
+                    
+                    if (loadedCount === variant.frames) {
+                        finishLoading();
+                    }
+                };
+                images.push(img);
+            }
+        }
+
+        function finishLoading() {
+            gsap.to("#loader", { opacity: 0, duration: 1, onComplete: () => {
+                document.getElementById('loader').style.display = 'none';
+            }});
+            renderCanvas();
+            setupScroll();
+        }
+
+        function setupScroll() {
+            // Reset scroll proxy
+            ScrollTrigger.getAll().forEach(t => t.kill());
+            
+            gsap.to(airbnb, {
+                frame: variants[currentIdx].frames - 1,
+                snap: "frame",
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#hero",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1.5
+                },
+                onUpdate: renderCanvas
+            });
+        }
+
+        function renderCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const img = images[Math.round(airbnb.frame)];
+            if (!img) return;
+
+            // Cover object-fit logic
+            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const x = (canvas.width / 2) - (img.width / 2) * scale;
+            const y = (canvas.height / 2) - (img.height / 2) * scale;
+            
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, x, y, img.width * scale, img.height * scale);
+        }
+
+        function changeVariant(dir) {
+            let next = currentIdx + dir;
+            if (next >= variants.length) next = 0;
+            if (next < 0) next = variants.length - 1;
+            
+            airbnb.frame = 0;
+            loadVariant(next);
+        }
+
+        window.addEventListener('resize', renderCanvas);
+        window.onload = init;
+    </script>
+</body>
+</html>
